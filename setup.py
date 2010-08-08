@@ -22,13 +22,13 @@
 from setuptools import setup
 
 setup(
-    name='wsgisolari',
+    name='solariwsgi',
     version='0.0.1a1',
     author='Eli Stevens',
     author_email='wickedgrey@gmail.com',
-    url='http://github.com/wickedgrey/wsgisolari',
+    url='http://github.com/wickedgrey/solariwsgi',
     description='A WSGI middleware layer dispatch mechanism, similar to Routes, that maps incoming URLs to child WSGI applications.',
-    packages=['wsgisolari',],
+    packages=['solariwsgi',],
     install_requires=[
             'WebOb >= 0.9.8',
         ],

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xml xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/"
+      py:strip="True"
+      >
+
+    <py:match path="head" once="true">
+        <head py:attrs="select('@*')">
+            <script src="http://code.jquery.com/jquery-1.4.2.js" type="text/javascript"></script>
+            <script src="${this.urlfor('static', package='wsgisolari', filename='js/ajaxsolari.js')}" type="text/javascript"></script>
+            ${select('*|text()')}
+        </head>
+    </py:match>
+</xml>

@@ -19,13 +19,4 @@
 # THE SOFTWARE.
 
 
-import pkg_resources
-
-from wsgisolari import DispatchTarget, controller
-
-@DispatchTarget('static', '/static/{package}/{filename}', package='[a-zA-Z_]+', filename='.+')
-@controller
-def static(package, filename):
-    return pkg_resources.resource_string(package, os.path.join('static', filename))
-
-# eof
+from core import this, application, registerPackage, DispatchTarget, controller
