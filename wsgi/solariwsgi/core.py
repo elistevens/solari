@@ -185,9 +185,9 @@ def packageCallback_genshisolari(packagename):
     
     this.defaults(
             templateLoader=tl,
-            text = lambda tmpl, data={}, method='html': tl.load(tmpl, cls=NewTextTemplate).generate(this=this, urlfor=urlfor, **data).render(method),
-            render = lambda tmpl, data={}, method='html': tl.load(tmpl).generate(this=this, urlfor=urlfor, **data).render(method),
-            serialize  = lambda tmpl, data={}, method='html': tl.load(tmpl).generate(this=this, urlfor=urlfor, **data).serialize(method),
+            text = lambda tmpl, data={}, method='xhtml': tl.load(tmpl, cls=NewTextTemplate).generate(this=this, urlfor=urlfor, **data).render(method),
+            render = lambda tmpl, data={}, method='xhtml': tl.load(tmpl).generate(this=this, urlfor=urlfor, **data).render(method),
+            serialize  = lambda tmpl, data={}, method='xhtml': tl.load(tmpl).generate(this=this, urlfor=urlfor, **data).serialize(method),
         )
 
 
