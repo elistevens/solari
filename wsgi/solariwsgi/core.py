@@ -32,7 +32,7 @@ import webob
 from webob import Request, Response
 #from webob import exc
 
-class This(threading.local):
+class Context(object):
     defaults_dict = {}
 
     def __init__(self, **kwargs):
@@ -45,21 +45,21 @@ class This(threading.local):
         self.__dict__.clear()
         self.__dict__.update(self.defaults_dict)
 
-this = This()
+context = Context()
 
 def application(environ, start_response):
-    this.clear()
+    context.clear()
     
-    this.request = Request(environ)
-    #this.response = Response(charset='utf8')
-    this.response = Response()
+    context.request = Request(environ)
+    #context.response = Response(charset='utf8')
+    context.response = Response()
     
     for target in DispatchTarget.target_dict.values():
-        match = target.regex.match(this.request.path_info)
+        match = target.regex.match(context.request.path_info)
         
         if match:
-            environ['URLVAR'] = this.urlvar_dict = match.groupdict()
-            environ['URLFOR'] = this.urlfor = functools.partial(urlfor, **match.groupdict())
+            environ['URLVAR'] = context.urlvar_dict = match.groupdict()
+            environ['URLFOR'] = context.urlfor = functools.partial(urlfor, **match.groupdict())
             
             #print type(environ['URLVAR']), repr(environ['URLVAR'])
             
@@ -129,22 +129,22 @@ class DispatchTarget(object):
 def controller(app):
     def middleware_controller(environ, start_response):
         try:
-            body = app(**this.urlvar_dict)
+            body = app(**context.urlvar_dict)
             
             #print repr(body)
             
         #except webob.exc.HTTPException, e:
         #    # ???
-        #    this.response = e
+        #    context.response = e
         finally:
             pass
         
         if isinstance(body, basestring):
-            this.response.body = body
+            context.response.body = body
         else:
-            this.response.app_iter = iter(body)
+            context.response.app_iter = iter(body)
             
-        return this.response(environ, start_response)
+        return context.response(environ, start_response)
 
     return middleware_controller
 
@@ -156,8 +156,8 @@ def urlfor(name, params=None, anchor=None, **kwargs):
     assert target.regex.match(url_str)
     
     params = ('?' + urllib.urlencode(params)) if params else ''
-    #base_str = '' if target.root else this.request.script_name
-    base_str = this.request.script_name
+    #base_str = '' if target.root else context.request.script_name
+    base_str = context.request.script_name
     
     if isinstance(anchor, basestring):
         anchor = '#' + anchor
@@ -183,11 +183,11 @@ def packageCallback_genshisolari(packagename):
     
     tl = TemplateLoader(loader.prefixed(**_loader_dict), max_cache_size=100*len(_loader_dict))
     
-    this.defaults(
+    context.defaults(
             templateLoader=tl,
-            text = lambda tmpl, data={}, method='xhtml': tl.load(tmpl, cls=NewTextTemplate).generate(this=this, urlfor=urlfor, **data).render(method),
-            render = lambda tmpl, data={}, method='xhtml': tl.load(tmpl).generate(this=this, urlfor=urlfor, **data).render(method),
-            serialize  = lambda tmpl, data={}, method='xhtml': tl.load(tmpl).generate(this=this, urlfor=urlfor, **data).serialize(method),
+            text = lambda tmpl, data={}, method='xhtml': tl.load(tmpl, cls=NewTextTemplate).generate(context=context, urlfor=urlfor, **data).render(method),
+            render = lambda tmpl, data={}, method='xhtml': tl.load(tmpl).generate(context=context, urlfor=urlfor, **data).render(method),
+            serialize  = lambda tmpl, data={}, method='xhtml': tl.load(tmpl).generate(context=context, urlfor=urlfor, **data).serialize(method),
         )
 
 

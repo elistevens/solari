@@ -55,9 +55,9 @@ def browserFingerprint(app):
                 browser_str = None
 
         if browser_str:
-            core.this.browser = (browser_str, ua_list[ua_list.index(browser_str) + 1], ua_str)
+            core.context.browser = (browser_str, ua_list[ua_list.index(browser_str) + 1], ua_str)
         else:
-            core.this.browser = (None, None, ua_str)
+            core.context.browser = (None, None, ua_str)
         
         app(environ, start_response)
         

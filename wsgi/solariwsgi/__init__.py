@@ -19,4 +19,4 @@
 # THE SOFTWARE.
 
 
-from core import this, application, registerPackage, DispatchTarget, controller
+from core import context, application, registerPackage, DispatchTarget, controller

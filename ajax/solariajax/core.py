@@ -25,29 +25,35 @@ import json
 # 3rd party packages
 
 # in-house
-from solariwsgi import this
+try:
+    from solariwsgi import context
+except ImportError:
+    class This(object):
+        pass
+    
+    this = This()
 
 def ajaxify(controller):
     def ajaxify_(*args, **kwargs):
-        this.ajax_data = []
+        context.ajax_data = []
         
         ret = controller(*args, **kwargs)
         
         assert ret is None
         
-        this.response.content_type = 'application/json'
-        return json.dumps(this.ajax_data)
+        context.response.content_type = 'application/json'
+        return json.dumps(context.ajax_data)
     return ajaxify_
 
 
 def append(selector, html):
-    this.ajax_data.append({'action':'append', 'selector':selector, 'html':html})
+    context.ajax_data.append({'action':'append', 'selector':selector, 'html':html})
 
 def jseval(script):
-    this.ajax_data.append({'action':'eval', 'script':script})
+    context.ajax_data.append({'action':'eval', 'script':script})
 
 def replace(selector, html):
-    this.ajax_data.append({'action':'replace', 'selector':selector, 'html':html})
+    context.ajax_data.append({'action':'replace', 'selector':selector, 'html':html})
 
 
 #eof

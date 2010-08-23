@@ -24,7 +24,7 @@ import mimetypes
 
 import pkg_resources
 
-from solariwsgi import this, DispatchTarget, controller
+from solariwsgi import context, DispatchTarget, controller
 from solariwsgi.core import packageCallback
 
 _package_set = set()
@@ -40,7 +40,7 @@ def static(package, path):
         content_type, content_encoding = mimetypes.guess_type(path)
         
         if content_type:
-            this.response.content_type = content_type
+            context.response.content_type = content_type
         else:
             # FIXME: what to use by default?
             pass
@@ -48,7 +48,7 @@ def static(package, path):
         # FIXME: locale settings can mess this up.  see:
         # http://stackoverflow.com/questions/225086/rfc-1123-date-representation-in-python
         expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=60)
-        this.response.headers.add('Expires', expires.strftime("%a, %d %b %Y %H:%M:%S GMT"))
+        context.response.headers.add('Expires', expires.strftime("%a, %d %b %Y %H:%M:%S GMT"))
         
         return pkg_resources.resource_stream(package, os.path.join('static', path))
 
