@@ -178,7 +178,7 @@ _loader_dict = {}
 
 @packageCallback
 def packageCallback_genshisolari(packagename):
-    print "packageCallback_genshisolari"
+    #print "packageCallback_genshisolari"
     _loader_dict[packagename] = loader.package(packagename, 'templates')
     
     tl = TemplateLoader(loader.prefixed(**_loader_dict), max_cache_size=100*len(_loader_dict))

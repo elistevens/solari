@@ -46,14 +46,20 @@ def ajaxify(controller):
     return ajaxify_
 
 
-def append(selector, html):
-    context.ajax_data.append({'action':'append', 'selector':selector, 'html':html})
+def append(selector, html, data=None):
+    if data is None:
+        data = context.ajax_data
+    data.append({'action':'append', 'selector':selector, 'html':html})
 
-def jseval(script):
-    context.ajax_data.append({'action':'eval', 'script':script})
+def jseval(script, data=None):
+    if data is None:
+        data = context.ajax_data
+    data.append({'action':'eval', 'script':script})
 
-def replace(selector, html):
-    context.ajax_data.append({'action':'replace', 'selector':selector, 'html':html})
+def replace(selector, html, data=None):
+    if data is None:
+        data = context.ajax_data
+    data.append({'action':'replace', 'selector':selector, 'html':html})
 
 
 #eof
