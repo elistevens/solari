@@ -59,7 +59,7 @@ def browserFingerprint(app):
         else:
             core.context.browser = (None, None, ua_str)
         
-        app(environ, start_response)
+        return app(environ, start_response)
         
     return middleware_browserFingerprint
 
