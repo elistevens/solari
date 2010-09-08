@@ -53,6 +53,7 @@ def static(package, path):
         return pkg_resources.resource_stream(package, os.path.join('static', path))
 
     else:
+        print "Invalid package:", package, _package_set
         return None
     
 

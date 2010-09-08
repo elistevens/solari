@@ -28,38 +28,35 @@ import json
 try:
     from solariwsgi import context
 except ImportError:
-    class This(object):
-        pass
-    
-    this = This()
+    context = None
 
 def ajaxify(controller):
     def ajaxify_(*args, **kwargs):
-        context.ajax_data = []
+        context.ajaxData = []
         
         ret = controller(*args, **kwargs)
         
         assert ret is None
         
         context.response.content_type = 'application/json'
-        return json.dumps(context.ajax_data)
+        return json.dumps(context.ajaxData)
     return ajaxify_
 
 
 def append(selector, html, data=None):
     if data is None:
-        data = context.ajax_data
+        data = context.ajaxData
     data.append({'action':'append', 'selector':selector, 'html':html})
 
 def jseval(script, data=None):
     if data is None:
-        data = context.ajax_data
+        data = context.ajaxData
     data.append({'action':'eval', 'script':script})
 
-def replace(selector, html, data=None):
+def replace(selector, html, anim='instant', data=None):
     if data is None:
-        data = context.ajax_data
-    data.append({'action':'replace', 'selector':selector, 'html':html})
+        data = context.ajaxData
+    data.append({'action':'replace', 'selector':selector, 'html':html, 'anim':anim})
 
 
 #eof

@@ -28,6 +28,7 @@ function process(data, textStatus, XMLHttpRequest) {
         // These are roughly ordered by usage frequency.
         if (action == 'replace') {
             //var where = $(command.where);
+            //TODO: handle anim
             $(command.selector).html(command.html);
         }
         else if (action == 'eval') {
@@ -49,7 +50,7 @@ function collectInput() {
             else if (this.selectedIndex != null) {
                 input[this.name] = this.options[this.selectedIndex].value;
             }
-            else if (this.type == 'checkbox') {
+            else if (this.type == 'checkbox' || this.type == 'radio') {
                 if (this.checked) {
                     input[this.name] = this.value;
                 }
