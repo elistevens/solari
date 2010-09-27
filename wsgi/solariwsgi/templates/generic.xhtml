@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/"
+      py:strip="True"
+      >
+    <xi:include py:for="href in generic_includes" href="../${href}"/>
+    <div py:replace="value_of(generic_func)(*value_of('generic_args', []), **value_of('generic_kwargs', {}))"/>
+</html>

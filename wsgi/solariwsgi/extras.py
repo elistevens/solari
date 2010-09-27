@@ -70,17 +70,51 @@ def browserFingerprint(app):
 try:
     import couchable
 
-    def addCouchableDb(contr):
-        def middleware_addCouchableDb(**kwargs):
-            cdburl = kwargs.get('cdburl', core.context.request.params.get('cdburl', 'http://localhost:5894'))
-            cdbname = kwargs.get('cdbname', core.context.request.params.get('cdbname', '?'))
 
-            if cdbname != '?':
-                core.context.cdb = couchable.CouchableDb(cdbname, cdburl)
+    def trace(*args):
+        def _trace(func):
+            def wrapper(*args, **kwargs):
+                print enter_string
+                func(*args, **kwargs)
+                print exit_string
+            return wrapper
 
-            return contr(**kwargs)
+        if len(args) == 1 and callable(args[0]):
+            # No arguments, this is the decorator
+            # Set default values for the arguments
+            enter_string = 'entering'
+            exit_string = 'exiting'
+            return _trace(args[0])
+        else:
+            # This is just returning the decorator
+            enter_string, exit_string = args
+            return _trace
 
-        return middleware_addCouchableDb
+
+
+    def addCouchableDb(cdbname='?', cdburl='http://localhost:5984'):
+        def addCouchableDb_(func):
+            @functools.wraps(func)
+            def addCouchableDb__(*args, **kwargs):
+                core.context.cdb = couchable.CouchableDb(kwargs.get('cdburl', cdbname), kwargs.get('cdbname', cdburl))
+                return func(*args, **kwargs)
+
+            return addCouchableDb__
+        return addCouchableDb_
+
+        #if len(args) == 1 and callable(args[0]):
+        #    # No arguments, this is the decorator
+        #    # Set default values for the arguments
+        #    enter_string = 'entering'
+        #    exit_string = 'exiting'
+        #    return _trace(args[0])
+        #else:
+        #    # This is just returning the decorator
+        #    enter_string, exit_string = args
+        #
+        #    return functools.partial(middleware_addCouchableDb, **kwargs)
+        #
+        #return middleware_addCouchableDb
 
 except ImportError:
     pass

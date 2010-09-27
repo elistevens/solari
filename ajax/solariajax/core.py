@@ -1,15 +1,15 @@
 # Copyright (c) 2010 Eli Stevens
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +21,7 @@
 
 # stdlib
 import json
+import string
 
 # 3rd party packages
 
@@ -32,31 +33,40 @@ except ImportError:
 
 def ajaxify(controller):
     def ajaxify_(*args, **kwargs):
-        context.ajaxData = []
-        
+        context.ajaxdata_ = []
+
         ret = controller(*args, **kwargs)
-        
+
         assert ret is None
-        
+
         context.response.content_type = 'application/json'
-        return json.dumps(context.ajaxData)
+        return json.dumps(context.ajaxdata_)
     return ajaxify_
 
 
-def append(selector, html, data=None):
-    if data is None:
-        data = context.ajaxData
-    data.append({'action':'append', 'selector':selector, 'html':html})
+def append(selector, html, data_=None):
+    if data_ is None:
+        data_ = context.ajaxdata_
+    data_.append({'action':'append', 'selector':selector, 'html':html})
 
-def jseval(script, data=None):
-    if data is None:
-        data = context.ajaxData
-    data.append({'action':'eval', 'script':script})
+def jseval(script, data_=None, **kwargs):
+    if data_ is None:
+        data_ = context.ajaxdata_
 
-def replace(selector, html, anim='instant', data=None):
-    if data is None:
-        data = context.ajaxData
-    data.append({'action':'replace', 'selector':selector, 'html':html, 'anim':anim})
+    if kwargs:
+        script = string.Template(script).substitute(kwargs)
+
+    data_.append({'action':'eval', 'script':script})
+
+def content(selector, html, anim='instant', data_=None):
+    if data_ is None:
+        data_ = context.ajaxdata_
+    data_.append({'action':'content', 'selector':selector, 'html':html, 'anim':anim})
+
+def replace(selector, html, anim='instant', data_=None):
+    if data_ is None:
+        data_ = context.ajaxdata_
+    data_.append({'action':'replace', 'selector':selector, 'html':html, 'anim':anim})
 
 
 #eof

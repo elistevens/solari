@@ -1,15 +1,15 @@
 // Copyright (c) 2010 Eli Stevens
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,18 +24,24 @@ function process(data, textStatus, XMLHttpRequest) {
     for (var i in data) {
         var command = data[i];
         var action = command.action;
-        
+
         // These are roughly ordered by usage frequency.
-        if (action == 'replace') {
-            //var where = $(command.where);
+        if (action == 'content') {
             //TODO: handle anim
             $(command.selector).html(command.html);
         }
         else if (action == 'eval') {
             eval(command.script)
         }
+        else if (action == 'replace') {
+            //$(command.selector).html(function(index, old) { return old + command.html });
+            //TODO: handle anim
+            $(command.selector).replaceWith(command.html);
+        }
         else if (action == 'append') {
-            $(command.selector).html(function(index, old) { return old + command.html });
+            //$(command.selector).html(function(index, old) { return old + command.html });
+            //TODO: handle anim
+            $(command.selector).append(command.html);
         }
     }
 }
@@ -43,24 +49,90 @@ function process(data, textStatus, XMLHttpRequest) {
 function collectInput() {
     var input = {};
     for(var i=0; i< arguments.length; i++) {
-        $(arguments[i]).each(function(index) {
-            if (this.disabled == true) {
-                ;
-            }
-            else if (this.selectedIndex != null) {
-                input[this.name] = this.options[this.selectedIndex].value;
-            }
-            else if (this.type == 'checkbox' || this.type == 'radio') {
-                if (this.checked) {
+        $(arguments[i]).each(
+            function (index) {
+                if (this.disabled == true) {
+                    ;
+                }
+                else if (this.selectedIndex != null) {
+                    input[this.name] = this.options[this.selectedIndex].value;
+                }
+                else if (this.type == 'checkbox' || this.type == 'radio') {
+                    if (this.checked) {
+                        input[this.name] = this.value;
+                    }
+                    //else {
+                    //    input[this.name] = 0;
+                    //}
+                }
+                else {
                     input[this.name] = this.value;
                 }
-            }
-            else {
-                input[this.name] = this.value;
-            }
-        });
+            });
     }
-    
+
+    return input;
+}
+
+// FIXME: Ugly lack of code reuse because I can't be arsed to figure out the
+// proper closure on this.
+function collectAll() {
+    var input = {};
+    for(var i=0; i< arguments.length; i++) {
+        $(arguments[i] + ' input').each(
+            function (index) {
+                if (this.disabled == true) {
+                    ;
+                }
+                else if (this.selectedIndex != null) {
+                    input[this.name] = this.options[this.selectedIndex].value;
+                }
+                else if (this.type == 'checkbox' || this.type == 'radio') {
+                    if (this.checked) {
+                        input[this.name] = this.value;
+                    }
+                }
+                else {
+                    input[this.name] = this.value;
+                }
+            });
+
+        $(arguments[i] + ' select').each(
+            function (index) {
+                if (this.disabled == true) {
+                    ;
+                }
+                else if (this.selectedIndex != null) {
+                    input[this.name] = this.options[this.selectedIndex].value;
+                }
+                else if (this.type == 'checkbox' || this.type == 'radio') {
+                    if (this.checked) {
+                        input[this.name] = this.value;
+                    }
+                }
+                else {
+                    input[this.name] = this.value;
+                }
+            });
+        $(arguments[i] + ' textarea').each(
+            function (index) {
+                if (this.disabled == true) {
+                    ;
+                }
+                else if (this.selectedIndex != null) {
+                    input[this.name] = this.options[this.selectedIndex].value;
+                }
+                else if (this.type == 'checkbox' || this.type == 'radio') {
+                    if (this.checked) {
+                        input[this.name] = this.value;
+                    }
+                }
+                else {
+                    input[this.name] = this.value;
+                }
+            });
+    }
+
     return input;
 }
 
