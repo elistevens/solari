@@ -18,46 +18,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-
+# stdlib
 import collections
 import copy
 import datetime
 import functools
+import itertools
 import os, os.path
 import re
 import threading
 import urllib
 
+# 3rd party packages
 import pkg_resources
 
 import webob
 from webob import Request, Response
 #from webob import exc
 
-class Context(object):
-    reuseDefaults_dict = {}
-    copyDefaults_dict = {}
+# in-house
+from contextobj import context, tmpl
 
-    def __init__(self, **kwargs):
-        self.defaults(**kwargs)
-
-        self.clear()
-
-    def defaults(self, onclear='reuse', **kwargs):
-        if onclear == 'copy':
-            self.copyDefaults_dict.update(kwargs)
-        else:
-            self.reuseDefaults_dict.update(kwargs)
-
-    def clear(self):
-        self.__dict__.clear()
-        self.__dict__.update(self.reuseDefaults_dict)
-        self.__dict__.update(copy.deepcopy(self.copyDefaults_dict))
-
-context = Context()
 
 def application(environ, start_response):
-    context.clear()
+    context.reset()
+    tmpl.reset()
 
     context.request = Request(environ)
     #context.response = Response(charset='utf8')
@@ -76,7 +61,12 @@ def application(environ, start_response):
 
             #print type(environ['URLVAR']), repr(environ['URLVAR'])
 
-            return target.app(environ, start_response)
+            try:
+                return target.app(environ, start_response)
+            finally:
+                pass
+                #print "Context:", sorted(context.__dict__)
+                #print "Tmpl:   ", sorted(tmpl.__dict__), tmpl.reuseDefaults_dict
 
     # FIXME: 404
     start_response('404 Not Found', [('Content-type', 'text/plain')])
@@ -152,6 +142,9 @@ def controller(app):
         #except webob.exc.HTTPException, e:
         #    # ???
         #    context.response = e
+        except:
+            print context.request
+            raise
         finally:
             pass
 
@@ -188,7 +181,9 @@ def urlfor(name_, params=None, anchor=None, **kwargs):
 
 
 
-# This eventually needs to get split out into it's own package...
+tmpl.defaults(urlfor=urlfor)
+
+# This eventually needs to get split out into its own package...
 
 #from solariwsgi.core import packageCallback, this
 
@@ -197,13 +192,6 @@ from genshi.template.text import NewTextTemplate
 _loader_dict = {}
 
 
-def evenodd(iter, start=0):
-    eo_list = ['even', 'odd']
-    for i, x in enumerate(iter):
-        i += start
-        yield i, eo_list[i & 1], x
-
-context.defaults(onclear='copy', tmpl=Context(evenodd=evenodd))
 
 @packageCallback
 def packageCallback_genshisolari(packagename):
@@ -215,13 +203,13 @@ def packageCallback_genshisolari(packagename):
     def generate_tmpl(template_path, data=None, cls=None):
         render_dict = {}
 
-        if context.tmpl.__dict__:
-            render_dict.update(context.tmpl.__dict__)
+        if tmpl.__dict__:
+            render_dict.update(tmpl.__dict__)
 
         if data:
             render_dict.update(data)
 
-        return templateLoader.load(template_path, cls=cls).generate(context=context, urlfor=urlfor, **render_dict)
+        return templateLoader.load(template_path, cls=cls).generate(**render_dict)
 
     def text(template_path, data=None, method='text'):
         return generate_tmpl(template_path, data, NewTextTemplate).render(method)
@@ -238,6 +226,15 @@ def packageCallback_genshisolari(packagename):
             render = render,
             serialize  = serialize,
         )
+
+
+def evenodd(iter, start=0):
+    eo_list = ['even', 'odd']
+    for i, x in enumerate(iter):
+        i += start
+        yield i, eo_list[i & 1], x
+
+tmpl.defaults('reuse', evenodd=evenodd)
 
 
 

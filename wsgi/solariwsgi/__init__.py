@@ -19,4 +19,5 @@
 # THE SOFTWARE.
 
 
-from core import context, application, registerPackage, DispatchTarget, controller, urlfor
+from core import application, registerPackage, DispatchTarget, controller, urlfor
+from contextobj import context, tmpl
