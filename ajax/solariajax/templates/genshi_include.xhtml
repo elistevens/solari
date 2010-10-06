@@ -7,8 +7,8 @@
 
     <py:match path="head" once="true">
         <head py:attrs="select('@*')">
-            <script src="http://code.jquery.com/jquery-1.4.2.js" type="text/javascript"></script>
-            <script src="${this.urlfor('static', package='wsgisolari', filename='js/ajaxsolari.js')}" type="text/javascript"></script>
+            <script src="http://code.jquery.com/jquery-1.4.2.js" type="text/javascript" py:if="jsFramework == 'jQuery'"/>
+            <script src="${this.urlfor('static', package='wsgisolari', filename='js/${jsFramework}/solariajax.js')}" type="text/javascript"></script>
             ${select('*|text()')}
         </head>
     </py:match>
