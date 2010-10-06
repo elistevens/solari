@@ -38,8 +38,8 @@ from selenium import selenium
 
 # in-house
 import solariwsgi
-import solariwsgi.controllers.static
-import solariwsgi.controllers.helloworld
+import solariwsgi._webapp.static
+import solariwsgi._webapp.helloworld
 
 server_code = '''
 import sys
@@ -67,7 +67,7 @@ class TestCaseSeleniumBase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.wsgi_server = subprocess.Popen(['python', '-c', server_code] + (cls.solariPackages if cls.solariPackages else ['solariwsgi.controllers.helloworld']))
+        cls.wsgi_server = subprocess.Popen(['python', '-c', server_code] + (cls.solariPackages if cls.solariPackages else ['solariwsgi._webapp.helloworld']))
 
         cls.seleniumRC = subprocess.Popen(['java', '-jar', 'selenium-server.jar'])
 

@@ -29,8 +29,8 @@ from selenium import selenium
 
 # in-house
 import solariwsgi
-import solariwsgi.controllers.static
-import solariwsgi.controllers.helloworld
+import solariwsgi._webapp.static
+import solariwsgi._webapp.helloworld
 
 from solariwsgi.test_selenium import TestCaseSeleniumBase
 
@@ -49,7 +49,7 @@ except Exception, e:
 '''
 
 class TestBasic(TestCaseSeleniumBase):
-    solariPackages = ['solariajax', 'solariajax.controllers._test']
+    solariPackages = ['solariajax', 'solariajax._webapp.testing']
 
     def setUp(self):
         self.selWarnings = []
