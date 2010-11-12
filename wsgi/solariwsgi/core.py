@@ -83,7 +83,7 @@ def packageCallback_importControllers(packagename):
     try:
         __import__('{}._webapp'.format(packagename))
     except ImportError, e:
-        print e
+        print "packageCallback_importControllers", packagename, e
         #raise
         pass
 
@@ -195,7 +195,7 @@ _loader_dict = {}
 
 @packageCallback
 def packageCallback_genshisolari(packagename):
-    #print "packageCallback_genshisolari"
+    print "packageCallback_genshisolari", packagename
     _loader_dict[packagename] = loader.package(packagename, '_webapp/templates')
 
     templateLoader = TemplateLoader(loader.prefixed(**_loader_dict), max_cache_size=100*len(_loader_dict))
