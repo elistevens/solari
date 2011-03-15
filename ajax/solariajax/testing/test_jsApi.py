@@ -32,7 +32,7 @@ import solariwsgi
 import solariwsgi._webapp.static
 import solariwsgi._webapp.helloworld
 
-from solariwsgi.test_selenium import TestCaseSeleniumBase
+from solariwsgi.testing.test_selenium import TestCaseSeleniumBase
 
 server_code = '''
 import sys

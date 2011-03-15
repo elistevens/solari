@@ -69,7 +69,7 @@ class TestCaseSeleniumBase(unittest.TestCase):
     def setUpClass(cls):
         cls.wsgi_server = subprocess.Popen(['python', '-c', server_code] + (cls.solariPackages if cls.solariPackages else ['solariwsgi._webapp.helloworld']))
 
-        cls.seleniumRC = subprocess.Popen(['java', '-jar', 'selenium-server.jar'])
+        cls.seleniumRC = subprocess.Popen(['java', '-jar', 'selenium-server-standalone-2.0a4.jar'])
 
         for i in range(100):
             try:
